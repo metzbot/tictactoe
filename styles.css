@@ -1,0 +1,168 @@
+*,
+*::after,
+*::before {
+  box-sizing: border-box;
+}
+
+:root {
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+
+  --cell-size: 6.25rem;
+  --tictac-size: calc(var(--cell-size) * 0.8);
+}
+
+body {
+  margin: 0;
+}
+
+/*===================
+gameboard and tictacs
+===================*/
+.game-board {
+  width: 100vw;
+  height: 100vh;
+  display: grid;
+  justify-content: center;
+  align-content: center;
+  grid-template-columns: repeat(3, auto);
+  justify-items: center;
+  align-items: center;
+}
+
+.cell.x::before,
+.cell.x::after,
+.cell.o::before,
+.cell.o::after {
+  background-color: black;
+}
+
+.game-board.x .cell:not(.x):not(.o):hover::before,
+.game-board.x .cell:not(.x):not(.o):hover::after,
+.game-board.o .cell:not(.x):not(.o):hover::before,
+.game-board.o .cell:not(.x):not(.o):hover::after {
+  background-color: lightgrey;
+}
+
+.cell {
+  width: var(--cell-size);
+  height: var(--cell-size);
+  border: 4px solid black;
+
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  cursor: pointer;
+}
+
+.cell:first-child,
+.cell:nth-child(2),
+.cell:nth-child(3) {
+  border-top: none;
+}
+
+.cell:nth-child(3n + 1) {
+  border-left: none;
+}
+
+.cell:nth-child(3n + 3) {
+  border-right: none;
+}
+
+.cell:last-child,
+.cell:nth-child(8),
+.cell:nth-child(7) {
+  border-bottom: none;
+}
+
+.cell.x,
+.cell.o {
+  cursor: not-allowed;
+}
+
+.cell.x::before,
+.cell.x::after,
+.game-board.x .cell:not(.x):not(.o):hover::before,
+.game-board.x .cell:not(.x):not(.o):hover::after {
+  position: absolute;
+  content: '';
+  width: calc(var(--tictac-size) * 0.25);
+  height: var(--tictac-size);
+}
+
+.cell.x::before,
+.game-board.x .cell:not(.x):not(.o):hover::before {
+  transform: rotate(45deg);
+}
+
+.cell.x::after,
+.game-board.x .cell:not(.x):not(.o):hover::after {
+  transform: rotate(-45deg);
+}
+
+.cell.o::before,
+.cell.o::after,
+.game-board.o .cell:not(.x):not(.o):hover::before,
+.game-board.o .cell:not(.x):not(.o):hover::after {
+  position: absolute;
+  content: '';
+  border-radius: 50%;
+}
+
+.cell.o::before,
+.game-board.o .cell:not(.x):not(.o):hover::before {
+  width: var(--tictac-size);
+  height: var(--tictac-size);
+}
+
+.cell.o::after,
+.game-board.o .cell:not(.x):not(.o):hover::after {
+  width: calc(var(--tictac-size) * .6);
+  height: calc(var(--tictac-size)* .6);
+  background-color: white;
+}
+
+/*===========================
+modal junk, game over message
+===========================*/
+.modal {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0,0,0,.8);
+  
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  color: white;
+  font-size: 5rem;
+  font-weight: 700;
+  font-style: italic;
+  letter-spacing: .5rem;
+}
+
+.modal.show {
+  display: flex;
+}
+
+#newGameButton {
+  font-size: 4rem;
+  font-weight: 600;
+  background-color: white;
+  border: 1px solid black;
+  padding: .25em .5em;
+  cursor: pointer;
+}
+
+#newGameButton:hover {
+  background-color: black;
+  border-color: white;
+  color: white;
+}

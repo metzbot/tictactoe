@@ -8,6 +8,10 @@ literally everything
 -factory function for players
 -modules for gameBoard, displayController, game
 
-html skeleton
+
 
 styling
+-line animation for win
+
+
+You left off at: checkWin implementation line 21

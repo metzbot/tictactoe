@@ -15,6 +15,7 @@
 
 body {
   margin: 0;
+  background-color: rgb(107, 107, 107);
 }
 
 /*===================
@@ -35,7 +36,7 @@ gameboard and tictacs
 .cell.x::after,
 .cell.o::before,
 .cell.o::after {
-  background-color: black;
+  background-color: white;
 }
 
 .game-board.x .cell:not(.x):not(.o):hover::before,
@@ -48,7 +49,7 @@ gameboard and tictacs
 .cell {
   width: var(--cell-size);
   height: var(--cell-size);
-  border: 4px solid black;
+  border: 4px solid white;
 
   position: relative;
   display: flex;
@@ -56,6 +57,8 @@ gameboard and tictacs
   align-items: center;
 
   cursor: pointer;
+
+  transition: 1s ease-in;
 }
 
 .cell:first-child,
@@ -94,35 +97,40 @@ gameboard and tictacs
 }
 
 .cell.x::before,
-.game-board.x .cell:not(.x):not(.o):hover::before {
+.game-board.x .cell:not(.x):not(.o):hover::before
+ {
   transform: rotate(45deg);
 }
 
 .cell.x::after,
-.game-board.x .cell:not(.x):not(.o):hover::after {
+.game-board.x .cell:not(.x):not(.o):hover::after
+ {
   transform: rotate(-45deg);
 }
 
 .cell.o::before,
 .cell.o::after,
 .game-board.o .cell:not(.x):not(.o):hover::before,
-.game-board.o .cell:not(.x):not(.o):hover::after {
+.game-board.o .cell:not(.x):not(.o):hover::after
+ {
   position: absolute;
   content: '';
   border-radius: 50%;
 }
 
 .cell.o::before,
-.game-board.o .cell:not(.x):not(.o):hover::before {
+.game-board.o .cell:not(.x):not(.o):hover::before
+ {
   width: var(--tictac-size);
   height: var(--tictac-size);
 }
 
 .cell.o::after,
-.game-board.o .cell:not(.x):not(.o):hover::after {
+.game-board.o .cell:not(.x):not(.o):hover::after
+ {
   width: calc(var(--tictac-size) * .6);
   height: calc(var(--tictac-size)* .6);
-  background-color: white;
+  background-color: rgb(107, 107, 107);
 }
 
 /*===========================
@@ -140,6 +148,7 @@ modal junk, game over message
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  text-align: center;
 
   color: white;
   font-size: 5rem;
@@ -155,14 +164,34 @@ modal junk, game over message
 #newGameButton {
   font-size: 4rem;
   font-weight: 600;
-  background-color: white;
-  border: 1px solid black;
+  background-color: black;
+  color: white;
+  border: 1px solid white;
   padding: .25em .5em;
   cursor: pointer;
 }
 
 #newGameButton:hover {
-  background-color: black;
+  background-color: rgb(98, 98, 98);
   border-color: white;
+}
+
+#chooseTicModal {
+  flex-direction: row;
+}
+
+#chooseTicModal button {
+  font-size: 5rem;
+  font-weight: 800;
+  margin: .25em;
+  background: none;
+  border: none;
   color: white;
+  cursor: pointer;
+  transition: .25s ease-in;
+}
+
+#chooseTicModal button:hover {
+  border: 2px solid white;
+  border-radius: 10%;
 }

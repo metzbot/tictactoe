@@ -10,42 +10,64 @@ const Player = (tic = 'X') => {
 modules
 =====*/
 
+
 const gameBoard = (() => {
 
   const board = document.getElementById('gameBoard');
   const boardCells = document.querySelectorAll('.cell');
   const gameArray = [];
   
-  const handleCellClick = (e, turn) => {
-    displayController.renderBoard(e, turn);
-    if (gameState.checkWin()) console.log('victory');
-    //check for draw
+  const handleCellClick = (event) => {
+    let turn = gameState.getTurn();
+    displayController.renderBoard(event.currentTarget, turn);
+    gameState.endGame();
     gameState.switchTurns();
-    //displayController.setHover();
   }
-
-  boardCells.forEach(e => {
-    e.addEventListener('click', () => handleCellClick(e, gameState.getTurn()), { once: true });
-    gameArray.push(e);
+  
+  const clickEvents = (cells) => cells.forEach(cell => {
+    cell.addEventListener('click', handleCellClick, { once: true });
+    gameArray.push(cell);
+  });
+  
+  const killEvents = (cells) => cells.forEach(cell => {
+    if (cell.classList.contains('x') || cell.classList.contains('o')) cell.removeEventListener('click', handleCellClick);
   });
 
-  const xButton = document.getElementById('xButton');
-  const oButton = document.getElementById('oButton');
-  const newGameButton = document.getElementById('newGameButton');
+  const clearArray = () => gameArray.length = 0; //revisit this
+  
+  const newGameBoard = () => {
+    clearArray();
+    //console.log(gameArray);
+    killEvents(boardCells);
+    clickEvents(boardCells);
+  }
+
+  // const xButton = document.getElementById('xButton');
+  // const oButton = document.getElementById('oButton');
 
   const getBoardState = () => gameArray;
   const getGameBoard = () => board;
   
   return {
     getBoardState,
-    getGameBoard
+    getGameBoard,
+    newGameBoard
   };
+
 })();
 
 const displayController = (() => {
 
-  const setMark = (turn, e) => {
-    turn ? e.classList.add('x') : e.classList.add('o');
+  const boardCells = document.querySelectorAll('.cell');
+
+  const newGameDisplay = () => {
+    boardCells.forEach(cell => cell.classList.remove('x'));
+    boardCells.forEach(cell => cell.classList.remove('o'));
+    gameOverModal.classList.remove('show');
+  }
+
+  const setMark = (turn, cell) => {
+    turn ? cell.classList.add('x') : cell.classList.add('o');
   }
   
   const setHover = (turn) => {
@@ -55,14 +77,29 @@ const displayController = (() => {
     turn ? hover.add('x') : hover.add('o');
   }
   
-  const renderBoard = (e, turn) => {
-    setMark(turn, e);
+  const renderBoard = (cell, turn) => {
+    setMark(turn, cell);
     setHover(!turn);
+  }
+
+  const gameOverMessage = document.querySelector('[data-game-over]');
+  const setGameOverMessage = (turn, endState) => {
+    let winner;
+    turn ? winner = 'X' : winner = 'O';
+    endState === 'win' ? gameOverMessage.textContent = `${winner} wins` : gameOverMessage.textContent = `tie`;
+  }
+
+  const gameOverModal = document.getElementById('gameOverModal');
+  const gameOverDisplay = (turn, endState) => {
+    setGameOverMessage(turn, endState);
+    gameOverModal.classList.add('show');
   }
 
   return {
     renderBoard,
-    setHover
+    setHover,
+    gameOverDisplay,
+    newGameDisplay
   }
 })();
 
@@ -70,6 +107,8 @@ const gameState = (() => {
 
   let playerOne = Player();
   let xTurn = false;
+  const newGameButton = document.getElementById('newGameButton');
+
   const winners = [
     [0, 1, 2],
     [3, 4, 5],
@@ -81,18 +120,19 @@ const gameState = (() => {
     [2, 4, 6]
   ];
 
-  const chooseTic = (e) => playerOne.tic = e;
+  //const bestMove = 
+
+  //const chooseTic = (e) => playerOne.tic = e;
+  
   const initNewGame = () => {
-
+    displayController.newGameDisplay();
+    xTurn = false;
+    displayController.setHover(xTurn);
+    gameBoard.newGameBoard();
+    newGameButton.addEventListener('click', gameState.initNewGame, {once: true}); 
   }
-
+  
   const getTurn = () => xTurn;
-
-  // const checkWin = (turn) => {
-  //   if (turn) {
-  //     if (gameBoard.getBoardState()[0,1,2])
-  //   }
-  // }
 
   const switchTurns = () => xTurn = !xTurn;
 
@@ -107,9 +147,24 @@ const gameState = (() => {
     })
   }
 
+  const checkTie = () => {
+    let state = gameBoard.getBoardState();
+    return state.every(i => {
+      return (i.classList.contains('x') || i.classList.contains('o'));
+    });
+  }
+
+  const endGame = () => {
+    if (checkWin()) return displayController.gameOverDisplay(xTurn, 'win');
+    if (checkTie()) return displayController.gameOverDisplay(xTurn, 'tie');
+  }
+
   return {
     getTurn,
     switchTurns,
-    checkWin
+    endGame,
+    initNewGame
   }
 })();
+
+gameState.initNewGame();

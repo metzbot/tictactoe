@@ -64,6 +64,7 @@ const displayController = (() => {
     boardCells.forEach(cell => cell.classList.remove('x'));
     boardCells.forEach(cell => cell.classList.remove('o'));
     gameOverModal.classList.remove('show');
+    boardCells.forEach(cell => cell.classList.remove('modal-active'));
   }
 
   const setMark = (turn, cell) => {
@@ -93,6 +94,7 @@ const displayController = (() => {
   const gameOverDisplay = (turn, endState) => {
     setGameOverMessage(turn, endState);
     gameOverModal.classList.add('show');
+    boardCells.forEach(cell => cell.classList.add('modal-active'));
   }
 
   return {

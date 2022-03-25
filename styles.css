@@ -61,6 +61,10 @@ gameboard and tictacs
   transition: 1s ease-in;
 }
 
+.cell.modal-active {
+  border: 0;
+}
+
 .cell:first-child,
 .cell:nth-child(2),
 .cell:nth-child(3) {
@@ -138,13 +142,16 @@ modal junk, game over message
 ===========================*/
 .modal {
   position: fixed;
+  width: 0;
+  overflow: hidden;
+  opacity: 0;
   top: 0;
   bottom: 0;
   left: 0;
   right: 0;
-  background-color: rgba(0,0,0,.8);
+  background-color: rgba(0,0,0,0);
   
-  display: none;
+  display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
@@ -155,10 +162,14 @@ modal junk, game over message
   font-weight: 700;
   font-style: italic;
   letter-spacing: .5rem;
+
+  transition: background 0.5s ease-in;
 }
 
 .modal.show {
-  display: flex;
+  width: auto;
+  opacity: 1;
+  background-color: rgba(0,0,0,0.9);
 }
 
 #newGameButton {
@@ -169,6 +180,7 @@ modal junk, game over message
   border: 1px solid white;
   padding: .25em .5em;
   cursor: pointer;
+  transition: 0.2s ease-in;
 }
 
 #newGameButton:hover {

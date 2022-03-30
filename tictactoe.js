@@ -17,7 +17,6 @@ of the cell grid, and click events etc
 const gameBoard = (() => {
 
   const board = document.getElementById('gameBoard');
-  const boardCells = document.querySelectorAll('.cell');
   const gameArray = [];
   
   const handleCellClick = (event) => {
@@ -36,11 +35,12 @@ const gameBoard = (() => {
   const killEvents = (cells) => cells.forEach(cell => {
     if (cell.classList.contains('x') || cell.classList.contains('o')) cell.removeEventListener('click', handleCellClick);
   });
-
+  
   const clearArray = () => gameArray.length = 0; //revisit this
   
   const newGameBoard = () => {
     clearArray();
+    const boardCells = document.querySelectorAll('.cell');
     killEvents(boardCells);
     clickEvents(boardCells);
   }
@@ -65,12 +65,62 @@ displayController module for managing DOM rendering
 const displayController = (() => {
 
   const boardCells = document.querySelectorAll('.cell');
+  const newSheet = document.styleSheets.item(0);
 
-  const newGameDisplay = () => {
+  const newGameDisplay = (grid) => {
+    const gameBoard = document.getElementById('gameBoard');
+    gameBoard.innerHTML = '';
+    for (i = 0; i < (grid * grid); i++) {
+      gameBoard.innerHTML += `<div class='cell' data-cell></div>`;
+    }
+    gameBoard.style.gridTemplateColumns = `repeat(${grid}, auto)`;
+    console.log(newSheet.cssRules[0]);
+    if (newSheet.cssRules[0].cssText !== "*, ::after, ::before { box-sizing: border-box; }") {
+      console.log('fuck');
+      removeStyle();
+    }
+
+    styleBoard(grid);
     boardCells.forEach(cell => cell.classList.remove('x'));
     boardCells.forEach(cell => cell.classList.remove('o'));
     gameOverModal.classList.remove('show');
     boardCells.forEach(cell => cell.classList.remove('modal-active'));
+  }
+
+  const styleBoard = (n) => {
+    let topBorder = `.cell:first-child, .cell:nth-child(`;
+    for (let i = 2; i <= n; i++) {
+      if (i !== n) topBorder += `${i}), .cell:nth-child(`;
+      if (i === n) topBorder += `${i})`;
+    }
+    topBorder += ' { border-top: none }';
+
+    let leftBorder = `.cell:nth-child(${n}n + 1) { border-left: none }`;
+    
+    let rightBorder = `.cell:nth-child(${n}n + ${n}) { border-right: none }`;
+    
+    let bottomBorder = `.cell:last-child, .cell:nth-child(`;
+    let totalCells = n * n;
+    for (let i = totalCells - 1; i > totalCells - n; i--) {
+      if (i !== totalCells - n + 1) bottomBorder += `${i}), .cell:nth-child(`;
+      else bottomBorder += `${i})`;
+    }
+    bottomBorder += ' { border-bottom: none }';
+
+    newSheet.insertRule(topBorder, 0);
+    newSheet.insertRule(leftBorder, 0);
+    newSheet.insertRule(rightBorder, 0);
+    newSheet.insertRule(bottomBorder, 0);
+
+    return {
+      bottomBorder
+    }
+  }
+
+  const removeStyle = () => {
+    for (let i = 0; i < 4; i++) {
+      newSheet.deleteRule(0);
+    }
   }
 
   const setMark = (turn, cell) => {
@@ -107,7 +157,8 @@ const displayController = (() => {
     renderBoard,
     setHover,
     gameOverDisplay,
-    newGameDisplay
+    newGameDisplay,
+    styleBoard
   }
 })();
 
@@ -117,12 +168,13 @@ win conditions, stalemates, current player, etc
 ===========================================================*/
 const gameState = (() => {
 
-  let playerOne = Player();
+  //let playerOne = Player();
   let xTurn = false; //randomize this?
-  let userGridSize = 3; //user input
-  let gridSize = userGridSize * userGridSize;
+  let userGridSize = 0; //user input
+  let gridSize = 0;
   let oMovesRemaining = 0;
   let xMovesRemaining= 0;
+
   const newGameButton = document.getElementById('newGameButton');
 
   const oMovesRemainingCalc = (n) => { //called on newGameInit only, deducted later
@@ -189,16 +241,27 @@ const gameState = (() => {
   //const bestMove = 
 
   //const chooseTic = (e) => playerOne.tic = e;
+
+  const pageLoad = () => {
+    newGameButton.addEventListener('click', () => {
+      gameState.initNewGame(document.getElementById('gridSize').value)
+    }, { once: true });
+  }
   
-  const initNewGame = () => {
-    displayController.newGameDisplay();
+  const initNewGame = (grid) => {
+    grid = parseInt(grid, 10);
+    userGridSize = grid;
+    gridSize = userGridSize * userGridSize;
+    displayController.newGameDisplay(userGridSize);
     xTurn = false;
     oMovesRemaining = oMovesRemainingCalc(gridSize);
     xMovesRemaining = gridSize - oMovesRemaining;
     winners = algoWinners(userGridSize);
     displayController.setHover(xTurn);
     gameBoard.newGameBoard();
-    newGameButton.addEventListener('click', gameState.initNewGame, {once: true}); 
+    newGameButton.addEventListener('click', () => {
+      gameState.initNewGame(document.getElementById('gridSize').value)
+    }, { once: true });
   }
   
   const getTurn = () => xTurn;
@@ -214,56 +277,6 @@ const gameState = (() => {
       });
     });
   }
-
-  // const checkTie = () => {
-  //   let state = gameBoard.getBoardState();
-  //   return state.every(i => {
-  //     return (i.classList.contains('x') || i.classList.contains('o'));
-  //   });
-  // }
-
-/*   const algoCheckTie = () => {
-    if (xMovesRemaining < 1 && oMovesRemaining < 1) return;
-    let turn;
-    let otherTurn;
-    xTurn ? turn = 'x' : otherTurn = 'x';
-    !xTurn ? turn = 'o' : otherTurn = 'o';
-    let state = gameBoard.getBoardState();
-    // return winners.some(combo => {
-    //   (combo.includes(index => { state[index].classList.contains(turn) })) && (combo.every(index => { !state[index].classList.contains(otherTurn)}));
-    // });
-    let checkState = [];
-    state.forEach(element => {
-      if (element.classList.contains('x')) checkState.push('x');
-      if (element.classList.contains('o')) checkState.push('o');
-      checkState.push('');
-    })
-    //console.log(checkState);
-    for (let i = oMovesRemaining; i > 0; i--) {
-      checkState.forEach(element => {
-        if (element !== 'x' && element !== 'o') {
-          checkState[element] = 'o';
-        }  
-      });
-    }
-    for (let i = xMovesRemaining; i > 0; i--) {
-      checkState.forEach(element => {
-        if (element !== 'x' && element !== 'o') {
-          checkState[element] = 'x';
-        }
-      });
-    }
-    console.log(checkState);
-    //return checkWin(checkState);
-  } */
-  //     winners.some(combo => {
-  //     (combo.includes(index => { state[index].classList.contains(turn) })) && (combo.every(index => { !state[index].classList.contains(otherTurn)}));
-  // }
-    //&& !state[index].classList.contains(otherTurn)) return false;
-      //check currentPlayer's boardState against win conditions n-1 space
-      //Array.'at least n-1'.classList.contains('turn') ? how
-    //}
-    //return true;
 
   const algoCheckTie = (state) => {
     if (xMovesRemaining < 1 && oMovesRemaining < 1) return;
@@ -289,8 +302,9 @@ const gameState = (() => {
     switchTurns,
     endGame,
     initNewGame,
-    deductMove //temp
+    deductMove,
+    pageLoad
   }
 })();
 
-gameState.initNewGame();
+gameState.pageLoad();

@@ -12,6 +12,8 @@ to do:
     generates new board n*n size
     -change doc queries to reference created dom elements
 
+    -make sure to tell them the rules (minimum grid size etc)
+
 -choose to play AI
 -AI logic
 

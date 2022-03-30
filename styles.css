@@ -65,7 +65,7 @@ gameboard and tictacs
   border: 0;
 }
 
-.cell:first-child,
+/* .cell:first-child,
 .cell:nth-child(2),
 .cell:nth-child(3) {
   border-top: none;
@@ -83,7 +83,7 @@ gameboard and tictacs
 .cell:nth-child(8),
 .cell:nth-child(7) {
   border-bottom: none;
-}
+} */
 
 .cell.x,
 .cell.o {
@@ -170,6 +170,19 @@ modal junk, game over message
   width: auto;
   opacity: 1;
   background-color: rgba(0,0,0,0.9);
+}
+
+.modal p {
+  font-size: 2rem;
+  letter-spacing: 0;
+  font-style: normal;
+  margin-bottom: 0;
+}
+
+.modal input {
+  margin: 1rem;
+  font-size: 2rem;
+  width: 25%;
 }
 
 #newGameButton {

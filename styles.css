@@ -183,6 +183,10 @@ modal junk, game over message
   font-size: 1.25rem;
 }
 
+#warning {
+  color: red;
+}
+
 .modal form {
   display: flex;
   flex-direction: column;

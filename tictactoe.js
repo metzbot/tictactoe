@@ -111,10 +111,6 @@ const displayController = (() => {
     newSheet.insertRule(leftBorder, 0);
     newSheet.insertRule(rightBorder, 0);
     newSheet.insertRule(bottomBorder, 0);
-
-    return {
-      bottomBorder
-    }
   }
 
   const removeStyle = () => {

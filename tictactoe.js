@@ -249,10 +249,17 @@ const gameState = (() => {
       gameState.initNewGame(document.getElementById('gridSize').value)
     }, { once: true });
   }
+
+  const badGridSize = () => {
+    displayController.formValidateMessage();
+    newGameButton.addEventListener('click', () => {
+      gameState.initNewGame(document.getElementById('gridSize').value)
+    }, { once: true });
+  }
   
   const initNewGame = (grid) => {
     grid = parseInt(grid, 10);
-    if (grid < 2) return displayController.formValidateMessage();
+    if (grid < 2) return badGridSize();
     userGridSize = grid;
     gridSize = userGridSize * userGridSize;
     displayController.newGameDisplay(userGridSize);

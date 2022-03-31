@@ -179,6 +179,17 @@ modal junk, game over message
   margin-bottom: 0;
 }
 
+#example {
+  font-size: 1.25rem;
+}
+
+.modal form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
 .modal input {
   margin: 1rem;
   font-size: 2rem;

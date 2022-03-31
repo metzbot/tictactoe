@@ -1,5 +1,5 @@
 /*============
-player factory
+player factory currently does nothing
 ============*/
 
 const Player = (tic = 'X') => {
@@ -258,7 +258,7 @@ const gameState = (() => {
   }
   
   const initNewGame = (grid) => {
-    grid = parseInt(grid, 10);
+    grid = Math.floor(parseInt(grid, 10)); //.floor checks for asshole users
     if (grid < 2) return badGridSize();
     userGridSize = grid;
     gridSize = userGridSize * userGridSize;

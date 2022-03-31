@@ -153,12 +153,18 @@ const displayController = (() => {
     boardCells.forEach(cell => cell.classList.add('modal-active'));
   }
 
+  const gridSizeP = document.getElementById('gridSizeP');
+  const formValidateMessage = () => {
+    gridSizeP.textContent = 'size must be 2 or larger !'
+  }
+
   return {
     renderBoard,
     setHover,
     gameOverDisplay,
     newGameDisplay,
-    styleBoard
+    styleBoard,
+    formValidateMessage
   }
 })();
 
@@ -250,6 +256,7 @@ const gameState = (() => {
   
   const initNewGame = (grid) => {
     grid = parseInt(grid, 10);
+    if (grid < 2) return displayController.formValidateMessage();
     userGridSize = grid;
     gridSize = userGridSize * userGridSize;
     displayController.newGameDisplay(userGridSize);
